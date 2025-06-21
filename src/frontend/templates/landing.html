@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Map Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="url"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            background: #f9f9f9;
+        }
+
+        input[type="url"]:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 20px;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            color: #e74c3c;
+            margin-top: 10px;
+            padding: 10px;
+            background: #ffeaea;
+            border-radius: 5px;
+            border-left: 4px solid #e74c3c;
+            display: none;
+        }
+
+        .example {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .example-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .example-url {
+            font-family: monospace;
+            background: white;
+            padding: 8px;
+            border-radius: 4px;
+            color: #667eea;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗺️ Travel Map</h1>
+        <p class="subtitle">Generate an interactive map from your travel video</p>
+        
+        <form id="urlForm">
+            <div class="form-group">
+                <label for="videoUrl">Video URL:</label>
+                <input 
+                    type="url" 
+                    id="videoUrl" 
+                    name="videoUrl" 
+                    placeholder="https://example.com/your-video.mp4"
+                    required
+                >
+            </div>
+            
+            <button type="submit" class="btn" id="submitBtn">
+                Generate Map
+            </button>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                Processing your video...
+            </div>
+            
+            <div class="error" id="error"></div>
+        </form>
+
+        <div class="example">
+            <div class="example-title">Example URL format:</div>
+            <div class="example-url">https://your-site.com/video.mp4</div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('urlForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const videoUrl = document.getElementById('videoUrl').value;
+            
+            // Reset UI
+            error.style.display = 'none';
+            loading.style.display = 'block';
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+            
+            try {
+                const response = await fetch('/process', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url: videoUrl })
+                });
+                
+                if (response.ok) {
+                    // Redirect to map page
+                    window.location.href = '/map';
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to process video');
+                }
+            } catch (err) {
+                error.textContent = err.message;
+                error.style.display = 'block';
+                loading.style.display = 'none';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Generate Map';
+            }
+        });
+    </script>
+</body>
+</html>
