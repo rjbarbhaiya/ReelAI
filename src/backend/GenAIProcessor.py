@@ -1,4 +1,8 @@
+from models import Destination
+
 from langchain_community.chat_models import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
+
 from langchain.prompts import ChatPromptTemplate
 from langchain.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
@@ -12,10 +16,6 @@ import re
 from dotenv import load_dotenv
 load_dotenv()
 
-class Destination(BaseModel):
-    name: str = Field(description="Name of the destination or place")
-    description: Optional[str] = Field(description="Brief description of the destination")
-    confidence: float = Field(description="Confidence score of the detection (0-1)")
 
 class GenAIProcessor:
     def __init__(self, openai_api_key: str):
@@ -25,17 +25,23 @@ class GenAIProcessor:
         Args:
             openai_api_key (str): OpenAI API key for LLM access
         """
-        self.llm = ChatOpenAI(
-            model_name="gpt-4-turbo-preview",
-            temperature=0,
-            openai_api_key=openai_api_key
+        # self.llm = ChatOpenAI(
+        #     model_name="gpt-4-turbo-preview",
+        #     temperature=0,
+        #     openai_api_key=openai_api_key
+        # )
+
+        self.llm = ChatGoogleGenerativeAI(
+            model="gemini-2.5-pro",
+            google_api_key=os.getenv("GEMINI_API_KEY"),
+            temperature=0
         )
         
         # Initialize Google Vision client
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
         self.vision_client = vision.ImageAnnotatorClient()
 
-    def _parse_destination_response(self, response) -> List[Destination]:
+    def _parse_destination_response(self, response, reelID:int) -> List[Destination]:
         """
         Parse LLM response into Destination objects.
         
@@ -65,6 +71,7 @@ class GenAIProcessor:
                     confidence = float(conf_match.group(1)) if conf_match else 1.0
                     
                     destination = Destination(
+                        reel_id = reelID,
                         name=name,
                         description=description,
                         confidence=confidence
@@ -73,7 +80,7 @@ class GenAIProcessor:
         
         return destinations
 
-    def process_transcript(self, transcript: str) -> List[Destination]:
+    def process_transcript(self, transcript: str, reelID) -> List[Destination]:
         """
         Process the audio transcript to identify travel destinations.
         
@@ -103,9 +110,9 @@ class GenAIProcessor:
         chain = prompt | self.llm
         response = chain.invoke({"transcript": transcript})
         
-        return self._parse_destination_response(response)
+        return self._parse_destination_response(response, reelID)
 
-    def process_ocr_text(self, ocr_texts: List[str]) -> List[Destination]:
+    def process_ocr_text(self, ocr_texts: List[str], reelID) -> List[Destination]:
         """
         Process OCR text to identify travel destinations.
         
@@ -139,8 +146,11 @@ class GenAIProcessor:
         chain = prompt | self.llm
         response = chain.invoke({"text": combined_text})
         
-        return self._parse_destination_response(response)
+        destinations =  self._parse_destination_response(response, reelID)
 
+        return destinations
+
+    ##TODO- update this
     def process_image_frames(self, frame_paths: List[str]) -> List[Destination]:
         """
         Process image frames to identify travel destinations using Google Vision API.
@@ -172,54 +182,3 @@ class GenAIProcessor:
                 destinations.append(destination)
         
         return destinations
-
-    def combine_modalities(self, 
-                         transcript_destinations: List[Destination],
-                         ocr_destinations: List[Destination]) -> List[Destination]:
-                        #  image_destinations: List[Destination]) -> List[Destination]:
-        """
-        Combine results from all modalities to create a unified list of destinations.
-        
-        Args:
-            transcript_destinations (List[Destination]): Destinations from audio transcript
-            ocr_destinations (List[Destination]): Destinations from OCR text
-            image_destinations (List[Destination]): Destinations from image analysis
-            
-        Returns:
-            List[Destination]: Unified list of unique destinations
-        """            
-
-        # Combine all destinations
-        all_destinations = (
-            transcript_destinations + 
-            ocr_destinations
-            # image_destinations
-        )
-        
-        # Create a prompt to analyze and deduplicate destinations
-        destinations_text = "\n".join([
-            f"- {d.name}: {d.description} (Confidence: {d.confidence})"
-            for d in all_destinations
-        ])
-        
-        prompt = ChatPromptTemplate.from_messages([
-            ("system", """You are a travel destination analyzer. Your task is to:
-            1. Analyze the given list of destinations from different sources
-            2. Identify and merge duplicate destinations
-            3. For each unique destination, combine information from different sources
-            4. Update confidence scores based on multiple detections
-            5. Provide a final list of unique destinations with their descriptions and confidence scores
-            
-              
-            Format your response as a list of destinations with their descriptions and confidence scores. 
-            If the video only mentiones one locaion, provide the name of the location and a confidence score of 1
-            Use the following format:
-            * -Destination: destination name -Description: description -Confidence: confidence score * -Destination: destination name -Description: description-Confidence: confidence score; 
-            Be sure to only include an asteriks only once for each unique destination in the response and be sure to follow the above format"""),
-            ("user", "{destinations}")
-        ])
-        chain = prompt | self.llm
-        response = chain.invoke({"destinations": destinations_text})
-        print(response.content)
-        
-        return self._parse_destination_response(response)

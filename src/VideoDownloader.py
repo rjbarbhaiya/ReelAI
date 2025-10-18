@@ -7,8 +7,29 @@ from pathlib import Path
 import subprocess
 import shutil
 from dotenv import load_dotenv
+from datetime import datetime
 
 load_dotenv()
+
+class VideoMetadata:
+    def __init__(self, title=None, caption=None, thumbnail_url=None, upload_date=None, duration=None, uploader=None):
+        self.title = title
+        self.caption = caption
+        self.thumbnail_url = thumbnail_url
+        self.upload_date = upload_date
+        self.duration = duration
+        self.uploader = uploader
+    
+    def to_dict(self):
+        return {
+            'title': self.title,
+            'caption': self.caption,
+            'thumbnail_url': self.thumbnail_url,
+            'upload_date': self.upload_date,
+            'duration': self.duration,
+            'uploader': self.uploader
+        }
+
 class VideoDownloader:
     def __init__(self, temp_dir=None):
         """
@@ -22,6 +43,63 @@ class VideoDownloader:
         
         # Supported formats by VideoProcessor
         self.supported_formats = ['.mp4', '.mov', '.avi', '.mkv']
+    
+    def extract_metadata(self, url):
+        """
+        Extract metadata from video URL without downloading the video
+        
+        Args:
+            url: URL of the video
+            
+        Returns:
+            VideoMetadata: Object containing video metadata
+        """
+        try:
+            import yt_dlp
+            
+            ydl_opts = {
+                'quiet': True,
+                'no_warnings': True,
+                'extract_flat': False,
+            }
+            
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(url, download=False)
+                
+                # Extract relevant metadata
+                metadata = VideoMetadata(
+                    title=info.get('title'),
+                    caption=info.get('description') or info.get('caption'),
+                    thumbnail_url=info.get('thumbnail'),
+                    upload_date=info.get('upload_date'),
+                    duration=info.get('duration'),
+                    uploader=info.get('uploader') or info.get('channel')
+                )
+                
+                return metadata
+                
+        except ImportError:
+            raise Exception("yt-dlp not installed. Install with: pip install yt-dlp")
+        except Exception as e:
+            raise Exception(f"Failed to extract metadata: {str(e)}")
+    
+    def download_video_with_metadata(self, url, max_size_mb=100):
+        """
+        Download video and extract metadata
+        
+        Args:
+            url: URL of the video
+            max_size_mb: Maximum file size in MB to download
+            
+        Returns:
+            tuple: (video_path, metadata)
+        """
+        if self._is_direct_video_url(url):
+            # For direct video URLs, we can't extract metadata
+            video_path = self.download_video(url, max_size_mb)
+            return video_path, None
+        else:
+            return self._download_with_ytdlp_and_metadata(url, max_size_mb)
     
     def download_video(self, url, max_size_mb=100):
         """
@@ -197,29 +275,88 @@ class VideoDownloader:
                 print(f"Cleaned up file: {file_path}")
         except Exception as e:
             print(f"Warning: Could not clean up file {file_path}: {e}")
-
+    
+    def _download_with_ytdlp_and_metadata(self, url, max_size_mb=100):
+        """
+        Download using yt-dlp for social media platforms and extract metadata
+        """
+        try:
+            import yt_dlp
+            
+            file_id = str(uuid.uuid4())
+            output_template = os.path.join(self.temp_dir, f"social_video_{file_id}.%(ext)s")
+            
+            # Prefer supported formats
+            format_selector = 'best[ext=mp4]/best[ext=mov]/best[ext=avi]/best[ext=mkv]/best'
+            
+            ydl_opts = {
+                'outtmpl': output_template,
+                'format': format_selector,
+                'max_filesize': max_size_mb * 1024 * 1024,  # Convert MB to bytes
+            }
+            
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(url, download=True)
+                filename = ydl.prepare_filename(info)
+                
+                # Extract metadata
+                metadata = VideoMetadata(
+                    title=info.get('title'),
+                    caption=info.get('description') or info.get('caption'),
+                    thumbnail_url=info.get('thumbnail'),
+                    upload_date=info.get('upload_date'),
+                    duration=info.get('duration'),
+                    uploader=info.get('uploader') or info.get('channel')
+                )
+                
+                # Check if the downloaded format is supported
+                file_ext = Path(filename).suffix.lower()
+                if file_ext in self.supported_formats:
+                    print(f"Downloaded in supported format: {file_ext}")
+                    return filename, metadata
+                else:
+                    print(f"Downloaded format {file_ext} not supported - converting...")
+                    converted_path = self._convert_to_mp4(filename)
+                    return converted_path, metadata
+                
+        except ImportError:
+            raise Exception("yt-dlp not installed. Install with: pip install yt-dlp")
+        except Exception as e:
+            raise Exception(f"Failed to download from social media: {str(e)}")
 
 # Simple function to download video and pass to your existing processor
-def download_video(url):
+def download_video(url, include_metadata=False):
     """
-    Download video from URL and process with your existing VideoProcessor
+    Download video from URL and optionally extract metadata
+    
+    Args:
+        url: URL of the video
+        include_metadata: Whether to extract and return metadata
+        
+    Returns:
+        str or tuple: Video path, or (video_path, metadata) if include_metadata=True
     """
-    
-    
     downloader = VideoDownloader(temp_dir="/Users/riddhib/Documents/ReelAI/src/resources/Travel/Reels")
     temp_video_path = None
     
-
-    # Step 1: Download the video
-    print("Step 1: Downloading video...")
-    temp_video_path = downloader.download_social_media_video(url)
-    print(f"Video downloaded to: {temp_video_path}")
-    
-    
-    return temp_video_path
-    
+    try:
+        # Step 1: Download the video
+        print("Step 1: Downloading video...")
         
+        if include_metadata:
+            temp_video_path, metadata = downloader.download_video_with_metadata(url)
+            print(f"Video downloaded to: {temp_video_path}")
+            print(f"Metadata extracted: {metadata.to_dict() if metadata else 'None'}")
+            return temp_video_path, metadata
+        else:
+            temp_video_path = downloader.download_social_media_video(url)
+            print(f"Video downloaded to: {temp_video_path}")
+            return temp_video_path
+            
+    except Exception as e:
+        print(f"Error downloading video: {e}")
+        raise e
     # finally:
     #     # Step 3: Clean up downloaded file
-    #     if temp_video_path:
+    #     if temp_video_path and not include_metadata:  # Only cleanup if not returning metadata
     #         downloader.cleanup_file(temp_video_path)

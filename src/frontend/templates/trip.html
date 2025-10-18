@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ trip.name }} - Travel Map</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .container {
+        display: flex;
+        height: 100vh;
+      }
+
+      .sidebar {
+        width: 350px;
+        background: white;
+        border-right: 1px solid #e5e7eb;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        z-index: 1000;
+      }
+
+      .sidebar-header {
+        padding: 20px;
+        border-bottom: 1px solid #e5e7eb;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+      }
+
+      .trip-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+      .trip-description {
+        font-size: 14px;
+        opacity: 0.9;
+        margin-bottom: 15px;
+      }
+
+      .trip-meta {
+        font-size: 12px;
+        opacity: 0.8;
+      }
+
+      .sidebar-content {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+      }
+
+      .action-buttons {
+        margin-bottom: 25px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        padding: 10px 16px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        text-decoration: none;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      }
+
+      .btn-secondary {
+        background: #6b7280;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: #4b5563;
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: #667eea;
+        border: 2px solid #667eea;
+      }
+
+      .btn-outline:hover {
+        background: #667eea;
+        color: white;
+      }
+
+      .section-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .locations-list {
+        max-height: 400px;
+        overflow-y: auto;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: #f9fafb;
+      }
+
+      .location-item {
+        padding: 12px;
+        border-bottom: 1px solid #e5e7eb;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .location-item:hover {
+        background: #f3f4f6;
+      }
+
+      .location-item:last-child {
+        border-bottom: none;
+      }
+
+      .location-item.selected {
+        background: #dbeafe;
+        border-left: 3px solid #667eea;
+      }
+
+      .location-name {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 4px;
+      }
+
+      .location-context {
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 2px;
+      }
+
+      .location-coords {
+        font-size: 12px;
+        color: #888;
+      }
+
+      .map-container {
+        flex: 1;
+        position: relative;
+      }
+
+      #map {
+        height: 100%;
+        width: 100%;
+      }
+
+      .back-button {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        z-index: 1000;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .back-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+      }
+
+      .back-button:active {
+        transform: translateY(0);
+      }
+
+      .back-arrow {
+        font-size: 16px;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #666;
+      }
+
+      .empty-state i {
+        font-size: 48px;
+        color: #ddd;
+        margin-bottom: 15px;
+      }
+
+      .empty-state h3 {
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .success-message {
+        background: #d1fae5;
+        color: #065f46;
+        padding: 10px;
+        border-radius: 6px;
+        margin-bottom: 15px;
+        font-size: 14px;
+        display: none;
+      }
+
+      .error-message {
+        background: #fee2e2;
+        color: #991b1b;
+        padding: 10px;
+        border-radius: 6px;
+        margin-bottom: 15px;
+        font-size: 14px;
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        .sidebar {
+          width: 100%;
+          position: absolute;
+          height: 100%;
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+        }
+
+        .sidebar.show {
+          transform: translateX(0);
+        }
+
+        .sidebar-toggle {
+          position: absolute;
+          top: 20px;
+          left: 20px;
+          z-index: 1001;
+          background: white;
+          border: none;
+          border-radius: 8px;
+          padding: 10px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+          cursor: pointer;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Sidebar -->
+      <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="trip-title">{{ trip.name }}</div>
+          <div class="trip-description">{{ trip.description or 'No description' }}</div>
+          <div class="trip-meta">
+            Created {{ trip.created_at.strftime('%B %d, %Y') }} • {{ destinations|length }} locations
+          </div>
+        </div>
+        
+        <div class="sidebar-content">
+          <div class="action-buttons">
+            <a href="/dashboard" class="btn btn-outline">
+              <i class="fas fa-arrow-left"></i>
+              Switch Trip
+            </a>
+            <button id="addLocationsBtn" class="btn btn-primary">
+              <i class="fas fa-plus"></i>
+              Add Locations
+            </button>
+          </div>
+          
+          <div id="successMessage" class="success-message"></div>
+          <div id="errorMessage" class="error-message"></div>
+          
+          <div class="locations-section">
+            <div class="section-title">
+              <i class="fas fa-map-marker-alt"></i>
+              Trip Locations
+            </div>
+            
+            {% if destinations %}
+              <div id="locationsList" class="locations-list">
+                {% for destination in destinations %}
+                <div class="location-item" data-index="{{ loop.index0 }}">
+                  <div class="location-name">{{ destination.name }}</div>
+                  {% if destination.context %}
+                  <div class="location-context">{{ destination.context }}</div>
+                  {% endif %}
+                  <div class="location-coords">{{ destination.lat|round(4) }}, {{ destination.lng|round(4) }}</div>
+                </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="empty-state">
+                <i class="fas fa-map-marked-alt"></i>
+                <h3>No locations yet</h3>
+                <p>Add locations from your reels to see them here</p>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      
+      <!-- Map Container -->
+      <div class="map-container">
+        <button class="sidebar-toggle" id="sidebarToggle" style="display: none;">
+          <i class="fas fa-bars"></i>
+        </button>
+        
+        <a href="/dashboard" class="back-button">
+          <span class="back-arrow">←</span>
+          Back to Dashboard
+        </a>
+        
+        <div id="map"></div>
+      </div>
+    </div>
+
+    <!-- Include trip JavaScript -->
+    <script src="{{ url_for('static', filename='trip.js') }}"></script>
+
+    <!-- Load Google Maps JavaScript API -->
+    <script async defer
+      src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}">
+    </script>
+  </body>
+</html> 
