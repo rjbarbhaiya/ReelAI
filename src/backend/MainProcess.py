@@ -24,6 +24,7 @@ def process_video(video_url, user_id):
     print(user_id)
     try:
         key = os.getenv("GOOGLE_API")
+        print(key)
         if not key:
             raise ValueError("GOOGLE_API environment variable not found. Please check your .env file.")
         

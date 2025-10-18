@@ -31,7 +31,8 @@ class Reel(db.Model):
 class Destination(db.Model):
     __tablename__ = 'destinations'
     id = db.Column(db.Integer, primary_key=True)
-    reel_id = db.Column(db.Integer, db.ForeignKey('reels.id'), nullable=False)
+    reel_id = db.Column(db.Integer, db.ForeignKey('reels.id'), nullable=True)
+    trip_id = db.Column(db.Integer, db.ForeignKey('trips.id'), nullable=True)
     name = db.Column(db.Text, nullable=False)
     description = db.Column(db.Text)
     confidence = db.Column(db.Numeric(5, 4), default=0.0) 
@@ -66,6 +67,7 @@ class Trip(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     reels = db.relationship('Reel', secondary='trip_reels', backref='trips')
+    destinations = db.relationship('Destination', backref='trip', lazy=True)
 
 class TripReel(db.Model):
     __tablename__ = 'trip_reels'

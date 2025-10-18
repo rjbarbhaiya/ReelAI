@@ -12,6 +12,7 @@
 
       body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f8fafc;
       }
 
       .container {
@@ -19,171 +20,99 @@
         height: 100vh;
       }
 
-      .sidebar {
-        width: 350px;
+      /* Left Panel - New Locations */
+      .left-panel {
+        width: 320px;
         background: white;
         border-right: 1px solid #e5e7eb;
         display: flex;
         flex-direction: column;
-        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        box-shadow: 2px 0 15px rgba(0,0,0,0.08);
         z-index: 1000;
       }
 
-      .sidebar-header {
+      .panel-header {
         padding: 20px;
         border-bottom: 1px solid #e5e7eb;
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        background: linear-gradient(135deg, #8b5cf6, #a855f7);
         color: white;
       }
 
-      .sidebar-title {
+      .panel-title {
         font-size: 18px;
         font-weight: 600;
         margin-bottom: 5px;
-      }
-
-      .sidebar-subtitle {
-        font-size: 14px;
-        opacity: 0.9;
-      }
-
-      .sidebar-content {
-        flex: 1;
-        padding: 20px;
-        overflow-y: auto;
-      }
-
-      .save-section {
-        margin-bottom: 30px;
-      }
-
-      .section-title {
-        font-size: 16px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 15px;
         display: flex;
         align-items: center;
         gap: 8px;
       }
 
-      .trip-selector {
-        margin-bottom: 15px;
+      .panel-subtitle {
+        font-size: 14px;
+        opacity: 0.9;
+      }
+
+      .panel-content {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Trip Selector */
+      .trip-section {
+        margin-bottom: 25px;
+      }
+
+      .section-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
       }
 
       .trip-select {
         width: 100%;
-        padding: 10px;
+        padding: 12px;
         border: 2px solid #e5e7eb;
         border-radius: 8px;
         font-size: 14px;
         background: white;
-        transition: border-color 0.3s ease;
+        transition: all 0.3s ease;
       }
 
       .trip-select:focus {
         outline: none;
-        border-color: #667eea;
+        border-color: #8b5cf6;
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
       }
 
-      .new-trip-form {
-        background: #f8f9fa;
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 15px;
-        display: none;
+      /* New Locations Section */
+      .new-locations-section {
+        flex: 1;
+        margin-bottom: 25px;
       }
 
-      .new-trip-form.show {
-        display: block;
-      }
-
-      .form-group {
-        margin-bottom: 10px;
-      }
-
-      .form-group label {
-        display: block;
-        font-size: 12px;
-        font-weight: 600;
-        color: #555;
-        margin-bottom: 5px;
-      }
-
-      .form-group input, .form-group textarea {
-        width: 100%;
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 14px;
-      }
-
-      .form-group textarea {
-        resize: vertical;
-        min-height: 60px;
-      }
-
-      .btn {
-        padding: 10px 16px;
-        border: none;
-        border-radius: 6px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      .btn-primary {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-      }
-
-      .btn-primary:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-      }
-
-      .btn-secondary {
-        background: #6b7280;
-        color: white;
-      }
-
-      .btn-secondary:hover {
-        background: #4b5563;
-      }
-
-      .btn-outline {
-        background: transparent;
-        color: #667eea;
-        border: 2px solid #667eea;
-      }
-
-      .btn-outline:hover {
-        background: #667eea;
-        color: white;
-      }
-
-      .btn-small {
-        padding: 6px 12px;
-        font-size: 12px;
-      }
-
-      .locations-list {
+      .locations-container {
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
         max-height: 300px;
         overflow-y: auto;
-        border: 1px solid #e5e7eb;
-        border-radius: 8px;
-        background: #f9fafb;
       }
 
       .location-item {
-        padding: 10px;
+        padding: 12px 16px;
         border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        transition: all 0.2s ease;
         cursor: pointer;
-        transition: background-color 0.2s;
       }
 
       .location-item:hover {
@@ -194,32 +123,232 @@
         border-bottom: none;
       }
 
-      .location-item.selected {
-        background: #dbeafe;
-        border-left: 3px solid #667eea;
+      .location-checkbox {
+        margin-top: 2px;
+        width: 16px;
+        height: 16px;
+        accent-color: #8b5cf6;
+        cursor: pointer;
+      }
+
+      .location-details {
+        flex: 1;
+        min-width: 0;
       }
 
       .location-name {
         font-weight: 600;
-        color: #333;
-        margin-bottom: 2px;
+        color: #111827;
+        margin-bottom: 4px;
+        font-size: 14px;
       }
 
       .location-coords {
         font-size: 12px;
-        color: #666;
+        color: #6b7280;
       }
 
+      .location-description {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 4px;
+        line-height: 1.4;
+      }
+
+      /* Save Button */
+      .save-button {
+        background: linear-gradient(135deg, #8b5cf6, #a855f7);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+
+      .save-button:hover:not(:disabled) {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+      }
+
+      .save-button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      /* Add Reel Section */
+      .add-reel-section {
+        border-top: 1px solid #e5e7eb;
+        padding-top: 20px;
+        margin-top: auto;
+      }
+
+      .url-input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        margin-bottom: 12px;
+        transition: all 0.3s ease;
+      }
+
+      .url-input:focus {
+        outline: none;
+        border-color: #8b5cf6;
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+      }
+
+      .generate-button {
+        background: linear-gradient(135deg, #059669, #10b981);
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        width: 100%;
+        justify-content: center;
+      }
+
+      .generate-button:hover {
+        background: linear-gradient(135deg, #047857, #059669);
+        transform: translateY(-1px);
+      }
+
+      .generate-button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      /* Map Container */
       .map-container {
         flex: 1;
         position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .map-header {
+        background: white;
+        padding: 16px 24px;
+        border-bottom: 1px solid #e5e7eb;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      }
+
+      .current-trip {
+        font-size: 20px;
+        font-weight: 700;
+        color: #111827;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .trip-icon {
+        color: #8b5cf6;
       }
 
       #map {
-        height: 100%;
+        flex: 1;
         width: 100%;
       }
 
+      /* Right Panel - Saved Locations */
+      .right-panel {
+        width: 300px;
+        background: white;
+        border-left: 1px solid #e5e7eb;
+        display: flex;
+        flex-direction: column;
+        box-shadow: -2px 0 15px rgba(0,0,0,0.08);
+        z-index: 1000;
+      }
+
+      .right-panel .panel-header {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      }
+
+      .saved-locations-container {
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .saved-location-item {
+        padding: 16px;
+        border-bottom: 1px solid #e5e7eb;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        position: relative;
+      }
+
+      .saved-location-item:hover {
+        background: #f1f5f9;
+      }
+
+      .saved-location-item:last-child {
+        border-bottom: none;
+      }
+
+      .saved-location-name {
+        font-weight: 600;
+        color: #111827;
+        margin-bottom: 6px;
+        font-size: 14px;
+      }
+
+      .saved-location-coords {
+        font-size: 12px;
+        color: #6b7280;
+        margin-bottom: 8px;
+      }
+
+      .saved-location-description {
+        font-size: 12px;
+        color: #374151;
+        line-height: 1.4;
+        display: none;
+      }
+
+      .saved-location-item:hover .saved-location-description {
+        display: block;
+      }
+
+      .location-marker {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+      }
+
+      .marker-blue {
+        background: #3b82f6;
+      }
+
+      .marker-purple {
+        background: #8b5cf6;
+      }
+
+      /* Back Button */
       .back-button {
         position: absolute;
         bottom: 20px;
@@ -233,7 +362,7 @@
         font-size: 14px;
         font-weight: 600;
         cursor: pointer;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition: all 0.3s ease;
         box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         text-decoration: none;
         display: inline-flex;
@@ -246,50 +375,46 @@
         box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
       }
 
-      .back-button:active {
-        transform: translateY(0);
-      }
-
-      .back-arrow {
-        font-size: 16px;
-      }
-
+      /* Messages */
       .success-message {
         background: #d1fae5;
         color: #065f46;
-        padding: 10px;
-        border-radius: 6px;
+        padding: 12px;
+        border-radius: 8px;
         margin-bottom: 15px;
         font-size: 14px;
         display: none;
+        border-left: 4px solid #10b981;
       }
 
       .error-message {
         background: #fee2e2;
         color: #991b1b;
-        padding: 10px;
-        border-radius: 6px;
+        padding: 12px;
+        border-radius: 8px;
         margin-bottom: 15px;
         font-size: 14px;
         display: none;
+        border-left: 4px solid #ef4444;
       }
 
+      /* Loading States */
       .loading {
         display: none;
         text-align: center;
-        padding: 20px;
-        color: #667eea;
+        padding: 40px 20px;
+        color: #8b5cf6;
       }
 
       .spinner {
         display: inline-block;
-        width: 20px;
-        height: 20px;
+        width: 24px;
+        height: 24px;
         border: 3px solid #f3f3f3;
-        border-top: 3px solid #667eea;
+        border-top: 3px solid #8b5cf6;
         border-radius: 50%;
         animation: spin 1s linear infinite;
-        margin-right: 10px;
+        margin-bottom: 10px;
       }
 
       @keyframes spin {
@@ -297,124 +422,724 @@
         100% { transform: rotate(360deg); }
       }
 
+      /* Empty States */
+      .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #6b7280;
+      }
+
+      .empty-state i {
+        font-size: 48px;
+        margin-bottom: 16px;
+        opacity: 0.3;
+      }
+
+      .empty-state-text {
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 1024px) {
+        .right-panel {
+          width: 280px;
+        }
+        .left-panel {
+          width: 300px;
+        }
+      }
+
       @media (max-width: 768px) {
-        .sidebar {
+        .container {
+          flex-direction: column;
+        }
+        
+        .left-panel,
+        .right-panel {
           width: 100%;
-          position: absolute;
-          height: 100%;
-          transform: translateX(-100%);
-          transition: transform 0.3s ease;
+          height: 200px;
+          position: relative;
         }
-
-        .sidebar.show {
-          transform: translateX(0);
+        
+        .map-container {
+          flex: 1;
+          min-height: 400px;
         }
-
-        .sidebar-toggle {
-          position: absolute;
-          top: 20px;
-          left: 20px;
-          z-index: 1001;
-          background: white;
-          border: none;
-          border-radius: 8px;
-          padding: 10px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-          cursor: pointer;
+        
+        .panel-content {
+          max-height: 140px;
         }
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <!-- Sidebar -->
-      <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-          <div class="sidebar-title">🗺️ Save to Trip</div>
-          <div class="sidebar-subtitle">Save locations from this map to your trips</div>
+      <!-- Left Panel - New Locations -->
+      <div class="left-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <i class="fas fa-plus-circle"></i>
+            New Locations
+          </div>
+          <div class="panel-subtitle">Extract and save locations from reels</div>
         </div>
         
-        <div class="sidebar-content">
-          <div class="save-section">
+        <div class="panel-content">
+          <!-- Trip Selector -->
+          <div class="trip-section">
             <div class="section-title">
-              <i class="fas fa-save"></i>
-              Save Locations
+              <i class="fas fa-route"></i>
+              Select Trip
             </div>
-            
-            <div id="successMessage" class="success-message"></div>
-            <div id="errorMessage" class="error-message"></div>
-            
-            <div class="trip-selector">
-              <label for="tripSelect">Select Trip:</label>
-              <select id="tripSelect" class="trip-select">
-                <option value="">Choose a trip...</option>
-              </select>
-            </div>
-            
-            <button id="newTripBtn" class="btn btn-outline btn-small">
-              <i class="fas fa-plus"></i>
-              Create New Trip
-            </button>
-            
-            <div id="newTripForm" class="new-trip-form">
-              <div class="form-group">
-                <label for="tripName">Trip Name:</label>
-                <input type="text" id="tripName" placeholder="Enter trip name">
+            <select id="tripSelect" class="trip-select">
+              <option value="__new__">+ Create New Trip</option>
+              <option value="">Choose a trip...</option>
+              <!-- Trips will be populated from backend -->
+            </select>
+          </div>
+
+          <!-- New Trip Modal -->
+          <div id="newTripModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:2000; display:flex; align-items:center; justify-content:center;">
+            <div style="background:white; padding:32px 24px; border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.15); min-width:320px; max-width:90vw;">
+              <h2 style="font-size:1.25em; font-weight:600; margin-bottom:16px;">Create New Trip</h2>
+              <div style="margin-bottom:12px;">
+                <label for="tripName" style="font-size:0.95em; font-weight:500;">Trip Name</label>
+                <input id="tripName" type="text" class="url-input" placeholder="Enter trip name" style="margin-top:4px;">
               </div>
-              <div class="form-group">
-                <label for="tripDescription">Description:</label>
-                <textarea id="tripDescription" placeholder="Enter trip description"></textarea>
+              <div style="margin-bottom:16px;">
+                <label for="tripDescription" style="font-size:0.95em; font-weight:500;">Description</label>
+                <input id="tripDescription" type="text" class="url-input" placeholder="Enter description (optional)" style="margin-top:4px;">
               </div>
-              <button id="createTripBtn" class="btn btn-primary btn-small">
-                <i class="fas fa-check"></i>
-                Create Trip
-              </button>
+              <div style="display:flex; gap:10px; justify-content:flex-end;">
+                <button id="cancelTripBtn" class="btn" style="background:#e5e7eb; color:#374151;">Cancel</button>
+                <button id="createTripBtn" class="generate-button">Create</button>
+              </div>
+              <div id="newTripError" style="color:#ef4444; font-size:0.95em; margin-top:10px; display:none;"></div>
+            </div>
+          </div>
+
+          <div id="successMessage" class="success-message"></div>
+          <div id="errorMessage" class="error-message"></div>
+          
+          <!-- New Locations -->
+          <div class="new-locations-section">
+            <div class="section-title">
+              <i class="fas fa-map-marker-alt"></i>
+              New Locations
+              <span class="marker-purple location-marker"></span>
             </div>
             
-            <div style="margin-top: 15px;">
-              <button id="saveLocationsBtn" class="btn btn-primary" disabled>
-                <i class="fas fa-save"></i>
-                Save Selected Locations
-              </button>
+            <div class="locations-container" id="newLocationsContainer">
+              <div class="loading" id="loadingNewLocations" style="display: none;">
+                <div class="spinner"></div>
+                <div>Loading locations...</div>
+              </div>
+              
+              <div class="empty-state" id="emptyNewLocations">
+                <i class="fas fa-map-marker-alt"></i>
+                <div class="empty-state-text">
+                  No new locations found.<br>
+                  Add a reel URL below to extract locations.
+                </div>
+              </div>
+              
+              <!-- New locations will be populated here -->
             </div>
           </div>
           
-          <div class="locations-section">
+          <!-- Save Button -->
+          <button class="save-button" id="saveToTripBtn" disabled>
+            <i class="fas fa-save"></i>
+            Save to Trip
+          </button>
+          
+          <!-- Add Reel Section -->
+          <div class="add-reel-section">
             <div class="section-title">
-              <i class="fas fa-map-marker-alt"></i>
-              Available Locations
+              <i class="fas fa-link"></i>
+              Add Reel
             </div>
-            <div id="locationsList" class="locations-list">
-              <div class="loading">
-                <div class="spinner"></div>
-                Loading locations...
-              </div>
-            </div>
+            <input type="text" class="url-input" id="reelUrl" placeholder="Paste Instagram/TikTok reel URL here...">
+            <button class="generate-button" id="generateBtn">
+              <i class="fas fa-magic"></i>
+              Extract Locations
+            </button>
           </div>
         </div>
       </div>
       
       <!-- Map Container -->
       <div class="map-container">
-        <button class="sidebar-toggle" id="sidebarToggle" style="display: none;">
-          <i class="fas fa-bars"></i>
-        </button>
-        
-        <a href="/dashboard" class="back-button">
-          <span class="back-arrow">←</span>
-          Back to Dashboard
-        </a>
+        <div class="map-header">
+          <div class="current-trip" id="currentTripDisplay">
+            <i class="fas fa-route trip-icon"></i>
+            <span id="tripNameDisplay">Select a trip to get started</span>
+          </div>
+        </div>
         
         <div id="map"></div>
+        
+        <a href="/dashboard" class="back-button">
+          <span>←</span>
+          Back to Dashboard
+        </a>
+      </div>
+      
+      <!-- Right Panel - Saved Locations -->
+      <div class="right-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <i class="fas fa-bookmark"></i>
+            Saved Locations
+          </div>
+          <div class="panel-subtitle">Locations saved to your trip</div>
+        </div>
+        
+        <div class="panel-content">
+          <div class="section-title">
+            <i class="fas fa-map-marker-alt"></i>
+            Trip Locations
+            <span class="marker-blue location-marker"></span>
+          </div>
+          
+          <div class="saved-locations-container" id="savedLocationsContainer">
+            <div class="empty-state" id="emptySavedLocations">
+              <i class="fas fa-bookmark"></i>
+              <div class="empty-state-text">
+                No saved locations yet.<br>
+                Add locations from the left panel to get started.
+              </div>
+            </div>
+            
+            <!-- Saved locations will be populated here -->
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Include your custom JS file -->
-    <script src="{{ url_for('static', filename='map.js') }}"></script>
+    <script>
+      // Global variables
+      let map;
+      let newLocationMarkers = [];
+      let savedLocationMarkers = [];
+      let selectedTrip = '';
+      
+      // Sample data - replace with your backend API calls
+      let trips = {
+        'trip-1': 'Tokyo Adventure',
+        'trip-2': 'European Summer',
+        'trip-3': 'California Coast'
+      };
+      
+      let newLocations = [];
+      let savedLocations = [];
 
-    <!-- Load Google Maps JavaScript API -->
-    <script async defer
-      src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}">
+      // Initialize map - This function will be called by Google Maps API
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 10,
+          center: { lat: 40.7128, lng: -74.0060 }, // Default to NYC
+          styles: [
+            {
+              featureType: 'all',
+              elementType: 'geometry.fill',
+              stylers: [{ color: '#f8fafc' }]
+            },
+            {
+              featureType: 'water',
+              elementType: 'geometry',
+              stylers: [{ color: '#e0e7ff' }]
+            }
+          ]
+        });
+        
+        // Load data from backend
+        loadTrips();
+      }
+      
+      // Map marker functions
+      function addNewLocationMarkers() {
+        // Clear existing new location markers
+        newLocationMarkers.forEach(marker => marker.setMap(null));
+        newLocationMarkers = [];
+        
+        newLocations.forEach(location => {
+          const marker = new google.maps.Marker({
+            position: { lat: location.lat, lng: location.lng },
+            map: map,
+            title: location.name,
+            icon: {
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 8,
+              fillColor: '#8b5cf6',
+              fillOpacity: 1,
+              strokeColor: '#ffffff',
+              strokeWeight: 2
+            }
+          });
+          
+          const infoWindow = new google.maps.InfoWindow({
+            content: `
+              <div style="padding: 8px;">
+                <h3 style="margin: 0 0 8px 0; color: #8b5cf6;">${location.name}</h3>
+                <p style="margin: 0; color: #6b7280; font-size: 14px;">${location.description || ''}</p>
+              </div>
+            `
+          });
+          
+          marker.addListener('click', () => {
+            infoWindow.open(map, marker);
+          });
+          
+          newLocationMarkers.push(marker);
+        });
+        
+        // Fit bounds to show all markers if any exist
+        fitMapToMarkers();
+      }
+      
+      function addSavedLocationMarkers() {
+        // Clear existing saved location markers
+        savedLocationMarkers.forEach(marker => marker.setMap(null));
+        savedLocationMarkers = [];
+        
+        savedLocations.forEach(location => {
+          const marker = new google.maps.Marker({
+            position: { lat: location.lat, lng: location.lng },
+            map: map,
+            title: location.name,
+            icon: {
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 8,
+              fillColor: '#3b82f6',
+              fillOpacity: 1,
+              strokeColor: '#ffffff',
+              strokeWeight: 2
+            }
+          });
+          
+          const infoWindow = new google.maps.InfoWindow({
+            content: `
+              <div style="padding: 8px;">
+                <h3 style="margin: 0 0 8px 0; color: #3b82f6;">${location.name || location.formatted_name}</h3>
+                <p style="margin: 0; color: #6b7280; font-size: 14px;">${location.context || ''}</p>
+              </div>
+            `
+          });
+          
+          marker.addListener('click', () => {
+            infoWindow.open(map, marker);
+          });
+          
+          savedLocationMarkers.push(marker);
+        });
+        
+        // Fit bounds to show all markers
+        fitMapToMarkers();
+      }
+      
+      function fitMapToMarkers() {
+        const allMarkers = [...newLocationMarkers, ...savedLocationMarkers];
+        if (allMarkers.length > 0) {
+          const bounds = new google.maps.LatLngBounds();
+          allMarkers.forEach(marker => {
+            bounds.extend(marker.getPosition());
+          });
+          map.fitBounds(bounds);
+          
+          // Prevent zooming too close for single markers
+          if (allMarkers.length === 1) {
+            const listener = google.maps.event.addListener(map, 'idle', () => {
+              if (map.getZoom() > 15) map.setZoom(15);
+              google.maps.event.removeListener(listener);
+            });
+          }
+        }
+      }
+      
+      // Backend API functions (replace with your actual API endpoints)
+      async function loadTrips() {
+        try {
+          // Simulate API call - replace with actual endpoint
+          // const response = await fetch('/api/trips');
+          // const data = await response.json();
+          // trips = data.trips || {};
+          
+          // Remove static trips data and use /api/user/trips to populate the dropdown
+          await loadUserTrips();
+        } catch (error) {
+          console.error('Failed to load trips:', error);
+          showErrorMessage('Failed to load trips');
+        }
+      }
+      
+      // Remove static trips data and use /api/user/trips to populate the dropdown
+      async function loadUserTrips() {
+        try {
+          const response = await fetch('/api/user/trips');
+          const data = await response.json();
+          const tripSelect = document.getElementById('tripSelect');
+          tripSelect.innerHTML = '';
+          // Add the 'Create New Trip' option first
+          const newOption = document.createElement('option');
+          newOption.value = '__new__';
+          newOption.textContent = '+ Create New Trip';
+          tripSelect.appendChild(newOption);
+          // Add the 'Choose a trip...' option
+          const chooseOption = document.createElement('option');
+          chooseOption.value = '';
+          chooseOption.textContent = 'Choose a trip...';
+          tripSelect.appendChild(chooseOption);
+          // Add user's trips
+          if (data.success && data.trips.length > 0) {
+            data.trips.forEach(trip => {
+              const option = document.createElement('option');
+              option.value = trip.id;
+              option.textContent = trip.name;
+              tripSelect.appendChild(option);
+            });
+          }
+        } catch (error) {
+          console.error('Error loading trips:', error);
+        }
+      }
+
+      async function loadSavedLocations(tripId = null) {
+        if (!tripId) return;
+        try {
+          // Fetch trip destinations from backend
+          const response = await fetch(`/api/trips/${tripId}/destinations`);
+          const data = await response.json();
+          if (data.success && Array.isArray(data.destinations)) {
+            savedLocations = data.destinations;
+          } else {
+            savedLocations = [];
+          }
+          displaySavedLocations();
+          addSavedLocationMarkers();
+        } catch (error) {
+          console.error('Failed to load saved locations:', error);
+          showErrorMessage('Failed to load saved locations');
+          savedLocations = [];
+          displaySavedLocations();
+        }
+      }
+      
+      async function extractLocationsFromReel(reelUrl) {
+        try {
+          showLoadingState();
+          setGenerateButtonState(true);
+
+          const response = await fetch('/process', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: reelUrl })
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            showErrorMessage(data.error || 'Failed to extract locations from reel');
+            hideLoadingState();
+            setGenerateButtonState(false);
+            return;
+          }
+
+          // Fetch the actual locations
+          const locationsResponse = await fetch('/get_processed_destinations');
+          const locationsData = await locationsResponse.json();
+
+          if (!locationsResponse.ok || !locationsData.destinations) {
+            showErrorMessage('Failed to load extracted locations');
+            hideLoadingState();
+            setGenerateButtonState(false);
+            return;
+          }
+
+          newLocations = locationsData.destinations.map(loc => ({
+            id: loc.id || ('new-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9)),
+            name: loc.name || loc.destination || 'Unknown',
+            lat: loc.lat,
+            lng: loc.lng,
+            description: loc.description || ''
+          }));
+
+          displayNewLocations();
+          addNewLocationMarkers();
+          showSuccessMessage(`${newLocations.length} locations extracted successfully!`);
+          hideLoadingState();
+          setGenerateButtonState(false);
+
+        } catch (error) {
+          console.error('Failed to extract locations:', error);
+          showErrorMessage('Failed to extract locations from reel');
+          hideLoadingState();
+          setGenerateButtonState(false);
+        }
+      }
+      
+      async function saveLocationsToTrip(tripId, locationIds) {
+        try {
+          // Get the locations to save
+          const locationsToSave = newLocations.filter(loc => locationIds.includes(loc.id));
+          
+          // Prepare the data for the backend
+          const locationsData = locationsToSave.map(loc => ({
+            name: loc.name,
+            lat: loc.lat,
+            lng: loc.lng,
+            formatted_name: loc.name,
+            context: loc.description || ''
+          }));
+          
+          // Call the backend API to save locations
+          const response = await fetch(`/api/trips/${tripId}/locations`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ locations: locationsData })
+          });
+          
+          const data = await response.json();
+          
+          if (!response.ok) {
+            throw new Error(data.error || 'Failed to save locations');
+          }
+          
+          // Reload saved locations from the backend
+          await loadSavedLocations(tripId);
+          
+          // Remove saved locations from new locations
+          newLocations = newLocations.filter(loc => !locationIds.includes(loc.id));
+          
+          displayNewLocations();
+          addNewLocationMarkers();
+          
+          showSuccessMessage(`${locationIds.length} location(s) saved to trip`);
+          
+        } catch (error) {
+          console.error('Failed to save locations:', error);
+          showErrorMessage('Failed to save locations to trip');
+        }
+      }
+      
+      // Display functions
+      function displayNewLocations() {
+        const container = document.getElementById('newLocationsContainer');
+        const emptyState = document.getElementById('emptyNewLocations');
+        
+        // Clear existing location items
+        const existingItems = container.querySelectorAll('.location-item');
+        existingItems.forEach(item => item.remove());
+        
+        if (newLocations.length === 0) {
+          emptyState.style.display = 'block';
+          updateSaveButtonState();
+          return;
+        }
+        
+        emptyState.style.display = 'none';
+        
+        newLocations.forEach(location => {
+          const locationElement = createLocationItem(location);
+          container.appendChild(locationElement);
+        });
+        
+        updateSaveButtonState();
+      }
+      
+      function displaySavedLocations() {
+        const container = document.getElementById('savedLocationsContainer');
+        const emptyState = document.getElementById('emptySavedLocations');
+        
+        // Clear existing saved location items
+        const existingItems = container.querySelectorAll('.saved-location-item');
+        existingItems.forEach(item => item.remove());
+        
+        if (savedLocations.length === 0) {
+          emptyState.style.display = 'block';
+          return;
+        }
+        
+        emptyState.style.display = 'none';
+        
+        savedLocations.forEach(location => {
+          const locationElement = createSavedLocationItem(location);
+          container.appendChild(locationElement);
+        });
+      }
+      
+      function createLocationItem(location) {
+        const div = document.createElement('div');
+        div.className = 'location-item';
+        const displayName = location.name || location.formatted_name || location.address || 'Unknown';
+        div.innerHTML = `
+          <input type="checkbox" class="location-checkbox" data-id="${location.id}">
+          <div class="location-details">
+            <div class="location-name">${displayName}</div>
+            <div class="location-coords">${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}</div>
+            <div class="location-description">${location.description || ''}</div>
+          </div>
+        `;
+        const checkbox = div.querySelector('.location-checkbox');
+        checkbox.addEventListener('change', updateSaveButtonState);
+        return div;
+      }
+      
+      function createSavedLocationItem(location) {
+        const div = document.createElement('div');
+        div.className = 'saved-location-item';
+        const displayName = location.name || location.formatted_name || 'Unknown Location';
+        div.innerHTML = `
+          <div class="saved-location-name">${displayName}</div>
+          <div class="saved-location-coords">${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}</div>
+          <div class="saved-location-description">${location.context || ''}</div>
+        `;
+        return div;
+      }
+      
+      function getCheckedNewLocationIds() {
+        return Array.from(document.querySelectorAll('.location-checkbox:checked'))
+          .map(cb => cb.getAttribute('data-id'));
+      }
+      
+      function updateSaveButtonState() {
+        const checked = getCheckedNewLocationIds();
+        document.getElementById('saveToTripBtn').disabled = checked.length === 0;
+      }
+      
+      function showLoadingState() {
+        document.getElementById('loadingNewLocations').style.display = 'block';
+        document.getElementById('emptyNewLocations').style.display = 'none';
+      }
+      
+      function hideLoadingState() {
+        document.getElementById('loadingNewLocations').style.display = 'none';
+      }
+      
+      function setGenerateButtonState(loading) {
+        document.getElementById('generateBtn').disabled = loading;
+      }
+      
+      function showSuccessMessage(msg) {
+        const el = document.getElementById('successMessage');
+        el.textContent = msg;
+        el.style.display = 'block';
+        setTimeout(() => { el.style.display = 'none'; }, 2500);
+      }
+      
+      function showErrorMessage(msg) {
+        const el = document.getElementById('errorMessage');
+        el.textContent = msg;
+        el.style.display = 'block';
+        setTimeout(() => { el.style.display = 'none'; }, 2500);
+      }
+      
+      // Event listeners
+      document.addEventListener('DOMContentLoaded', async () => {
+        // Fetch current reel locations from /destinations and display in New Locations
+        try {
+          const response = await fetch('/destinations');
+          const data = await response.json();
+          console.log('Fetched destinations:', data);
+          if (Array.isArray(data) && data.length > 0) {
+            newLocations = data.map(loc => ({
+              id: loc.id || ('new-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9)),
+              name: loc.name || loc.destination || 'Unknown',
+              lat: loc.lat,
+              lng: loc.lng,
+              description: loc.description || ''
+            }));
+            if (typeof displayNewLocations === 'function') {
+              displayNewLocations();
+            }
+          }
+        } catch (err) {
+          console.error('Error fetching /destinations:', err);
+        }
+        // Trip selection
+        document.getElementById('tripSelect').addEventListener('change', (e) => {
+          const value = e.target.value;
+          if (value === '__new__') {
+            // Show the new trip modal
+            document.getElementById('newTripModal').style.display = 'flex';
+            // Do NOT reset e.target.value here!
+            document.getElementById('tripNameDisplay').textContent = 'Select a trip to get started';
+            return;
+          }
+          selectedTrip = value;
+          document.getElementById('tripNameDisplay').textContent = selectedTrip ? e.target.options[e.target.selectedIndex].text : 'Select a trip to get started';
+          loadSavedLocations(selectedTrip);
+          // Do NOT clear newLocations or call displayNewLocations here
+          addNewLocationMarkers();
+        });
+        // Extract locations from reel
+        document.getElementById('generateBtn').addEventListener('click', () => {
+          const url = document.getElementById('reelUrl').value.trim();
+          if (url) extractLocationsFromReel(url);
+        });
+        // Save to trip
+        document.getElementById('saveToTripBtn').addEventListener('click', () => {
+          const checkedIds = getCheckedNewLocationIds();
+          if (selectedTrip && checkedIds.length > 0) {
+            saveLocationsToTrip(selectedTrip, checkedIds);
+          }
+        });
+
+        // Add event listeners for new trip modal
+        const newTripModal = document.getElementById('newTripModal');
+        const cancelTripBtn = document.getElementById('cancelTripBtn');
+        const createTripBtn = document.getElementById('createTripBtn');
+        const tripNameInput = document.getElementById('tripName');
+        const tripDescriptionInput = document.getElementById('tripDescription');
+        const newTripError = document.getElementById('newTripError');
+
+        cancelTripBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          newTripModal.style.display = 'none';
+          // Reset dropdown to 'Choose a trip...'
+          document.getElementById('tripSelect').value = '';
+        });
+        createTripBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          const name = tripNameInput.value.trim();
+          const description = tripDescriptionInput.value.trim();
+          if (!name) {
+            newTripError.textContent = 'Trip name is required';
+            newTripError.style.display = 'block';
+            return;
+          }
+          createTripBtn.disabled = true;
+          try {
+            const response = await fetch('/api/trips', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ name, description })
+            });
+            const data = await response.json();
+            if (data.success) {
+              newTripModal.style.display = 'none';
+              createTripBtn.disabled = false;
+              // Reset dropdown to 'Choose a trip...'
+              document.getElementById('tripSelect').value = '';
+              // Optionally, reload trips in the selector
+              if (typeof loadUserTrips === 'function') {
+                await loadUserTrips();
+              } else if (typeof loadTrips === 'function') {
+                await loadTrips();
+              }
+            } else {
+              newTripError.textContent = data.error || 'Failed to create trip';
+              newTripError.style.display = 'block';
+              createTripBtn.disabled = false;
+            }
+          } catch (err) {
+            newTripError.textContent = 'Failed to create trip';
+            newTripError.style.display = 'block';
+            createTripBtn.disabled = false;
+          }
+        });
+      });
     </script>
-  </body>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap" async defer></script>  </body>
 </html>

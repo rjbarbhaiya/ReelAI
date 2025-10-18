@@ -12,6 +12,8 @@ import uuid
 from backend.auth_service import AuthService
 
 
+##TODO: load a url from the reel
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -47,14 +49,14 @@ def clear_session():
     AuthService.logout_user()
     return redirect(url_for('index'))
 
+## basically the landing page but top right has your user and access to existing trips
 @app.route("/dashboard")
 @login_required
 def dashboard():
     user = AuthService.get_current_user()
-    user_reels = Reel.query.filter_by(user_id=user.id).all()
-    user_trips = Trip.query.filter_by(user_id=user.id).all()
-    return render_template("dashboard.html", user=user, reels=user_reels, trips=user_trips)
+    return render_template("dashboard.html", user=user)
 
+##  called to get the dropdowm menu in the dashboard view
 @app.route("/api/user/trips")
 @login_required
 def get_user_trips():
@@ -130,9 +132,9 @@ def add_locations_to_trip(trip_id):
         for loc_data in locations:
             # Create destination
             destination = Destination(
-                reel_id=None,  # Will be set when we have reel functionality
+                trip_id=trip_id,  # Associate with the trip
                 name=loc_data.get('name', 'Unknown Location'),
-                context=loc_data.get('context', '')
+                description=loc_data.get('context', '')
             )
             db.session.add(destination)
             db.session.flush()  # Get the ID
@@ -142,7 +144,7 @@ def add_locations_to_trip(trip_id):
                 destination_id=destination.id,
                 lat=loc_data.get('lat'),
                 lng=loc_data.get('lng'),
-                formatted_name=loc_data.get('formatted_name', loc_data.get('name'))
+                address=loc_data.get('formatted_name', loc_data.get('name'))
             )
             db.session.add(location)
         
@@ -165,17 +167,31 @@ def trip_view(trip_id):
     
     # Get all destinations for this trip
     destinations = []
+    
+    # Get destinations from reels
     for reel in trip.reels:
         for destination in reel.destinations:
             if destination.location:
                 destinations.append({
                     'id': destination.id,
                     'name': destination.name,
-                    'context': destination.context,
+                    'context': destination.description,
                     'lat': destination.location.lat,
                     'lng': destination.location.lng,
-                    'formatted_name': destination.location.formatted_name
+                    'formatted_name': destination.location.address
                 })
+    
+    # Get destinations directly associated with the trip
+    for destination in trip.destinations:
+        if destination.location:
+            destinations.append({
+                'id': destination.id,
+                'name': destination.name,
+                'context': destination.description,
+                'lat': destination.location.lat,
+                'lng': destination.location.lng,
+                'formatted_name': destination.location.address
+            })
     
     return render_template("trip.html", trip=trip, destinations=destinations, user=user)
 
@@ -189,17 +205,33 @@ def get_trip_destinations(trip_id):
         return jsonify({"error": "Trip not found"}), 404
     
     destinations = []
+    
+
+    #I dont think this loop is needed
+    # Get destinations from reels
     for reel in trip.reels:
         for destination in reel.destinations:
             if destination.location:
                 destinations.append({
                     'id': destination.id,
                     'name': destination.name,
-                    'context': destination.context,
+                    'context': destination.description,
                     'lat': destination.location.lat,
                     'lng': destination.location.lng,
-                    'formatted_name': destination.location.formatted_name
+                    'formatted_name': destination.location.address
                 })
+    
+    # Get destinations directly associated with the trip
+    for destination in trip.destinations:
+        if destination.location:
+            destinations.append({
+                'id': destination.id,
+                'name': destination.name,
+                'context': destination.description,
+                'lat': destination.location.lat,
+                'lng': destination.location.lng,
+                'formatted_name': destination.location.address
+            })
     
     return jsonify({"success": True, "destinations": destinations})
 
@@ -382,6 +414,14 @@ def check_status():
         return jsonify({"ready": True, "destinations_count": len(processed_destinations[session_id])})
     else:
         return jsonify({"ready": False})
+
+@app.route("/get_processed_destinations", methods=["GET"])
+@login_required
+def get_processed_destinations():
+    session_id = session.get('session_id')
+    if not session_id or session_id not in processed_destinations:
+        return jsonify({"destinations": []})
+    return jsonify({"destinations": processed_destinations[session_id]})
 
 if __name__ == "__main__":
     app.run(debug=True)
